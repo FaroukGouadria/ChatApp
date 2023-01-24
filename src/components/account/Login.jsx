@@ -3,6 +3,8 @@ import Dialog from '@mui/material/Dialog';
 import { Box, List, ListItem, Typography } from '@mui/material';
 import { qrCodeImage } from '../../constants/data';
 import styled from '@emotion/styled';
+import {GoogleLogin} from '@react-oauth/google'
+import jwt_decode from 'jwt-decode';
 const Component=styled(Box)`
     display:flex;
 `;
@@ -40,6 +42,14 @@ const StyledList = styled(List)`
     }
 `;
 export default function Login() {
+    const onLoginSuccess =(res)=>{
+        console.log({res:res})
+        const decode=jwt_decode(res.credential);
+        console.log({decode:decode})
+    }
+     const onLoginError =(res)=>{
+            console.log("Failed to connect",res)
+    }
   return (
    <Dialog
     open={true}
@@ -54,8 +64,14 @@ export default function Login() {
                     <ListItem>3. Point your phone to this screen to capture the code</ListItem>               
              </StyledList>
             </Container>
-            <Box>
+            <Box style={{position:'relative'}}>
                 <QRCODE src={qrCodeImage} alt='QR code'/>
+                  <Box style={{ position: 'absolute',top:'50%',transform:'translateX(75%)' }}>
+                    <GoogleLogin
+                        onSuccess={onLoginSuccess}
+                        onError={onLoginError}
+                    />
+                </Box>
             </Box>
         </Component>
    </Dialog>
